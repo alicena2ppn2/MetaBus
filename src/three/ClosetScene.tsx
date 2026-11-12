@@ -50,7 +50,12 @@ export function ClosetScene({ look, focus, spin }: Props) {
     <>
       <color attach="background" args={[night ? '#3a342f' : '#f6efe6']} />
       <hemisphereLight args={night ? ['#e6e2f0', '#6a5c50', 1.55] : ['#ffffff', '#f0dcc8', 2.1]} />
-      <directionalLight position={[2, 6, 6]} intensity={night ? 1.0 : 1.6} />
+      {/* 고민 상담방과 같이, 밤에만 아래 앞쪽에서 캐릭터를 비춘다 */}
+      {night && <pointLight position={[0, 0.5, 3.2]} color="#ffd9b0" intensity={8} distance={9} />}
+      <directionalLight
+        position={night ? [1.2, 2.4, 6] : [2, 6, 6]}
+        intensity={night ? 0.85 : 1.6}
+      />
 
       {/* 받침대 */}
       <mesh position={[0, -0.07, 0]}>
