@@ -157,8 +157,9 @@ export function WorryScene({ balloons, selectedId, myLook, onBalloonPress, onLab
     <>
       <color attach="background" args={[night ? '#3a3356' : '#f4eefb']} />
       <hemisphereLight args={night ? ['#c4c6ee', '#5a4f7a', 1.55] : ['#ffffff', '#dccff0', 2.1]} />
-      {night && <pointLight position={[0, 2.4, 2.6]} color="#ffd9b0" intensity={8} distance={9} />}
-      <directionalLight position={[2, 7, 6]} intensity={night ? 0.85 : 1.5} />
+      {/* 빛이 위에서만 오면 후드 테두리가 얼굴에 그림자를 드리워서, 얼굴 높이의 앞쪽에서 비춘다 */}
+      {night && <pointLight position={[0, 1.3, 3.4]} color="#ffd9b0" intensity={7} distance={9} />}
+      <directionalLight position={[1.2, 2.4, 6]} intensity={night ? 0.85 : 1.5} />
       <CameraRig balloons={balloons} onLabels={onLabels} />
       <Room night={night} />
       <Avatar look={myLook} position={[0, 0, 0.9]} scale={1.05} />
