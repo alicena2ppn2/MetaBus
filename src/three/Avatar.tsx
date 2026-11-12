@@ -284,23 +284,27 @@ export function Avatar({
       </mesh>
 
       <group ref={body}>
-        {!asleep &&
-          [-1, 1].map((s) => (
-            <group key={s} position={[s * 0.095, 0, 0]}>
-              <mesh position={[0, 0.06, 0.035]} scale={[1, 0.68, 1.5]}>
-                <sphereGeometry args={[0.085, 12, 10]} />
-                <Soft color={SHOE} />
-              </mesh>
-              <mesh position={[0, 0.14, 0]}>
-                <cylinderGeometry args={[0.06, 0.062, 0.06, 12]} />
-                <Soft color="#ffffff" />
-              </mesh>
-              <mesh position={[0, 0.2, 0]}>
-                <cylinderGeometry args={[0.052, 0.052, 0.08, 12]} />
-                <Soft color={c.skin} />
-              </mesh>
-            </group>
-          ))}
+        {/* 다리: 잘 때는 앞으로 쭉 뻗고 앉는다 */}
+        {[-1, 1].map((s) => (
+          <group
+            key={s}
+            position={asleep ? [s * 0.095, 0.3, 0.33] : [s * 0.095, 0, 0]}
+            rotation={[asleep ? -Math.PI / 2 : 0, 0, 0]}
+          >
+            <mesh position={[0, 0.06, 0.035]} scale={[1, 0.68, 1.5]}>
+              <sphereGeometry args={[0.085, 12, 10]} />
+              <Soft color={SHOE} />
+            </mesh>
+            <mesh position={[0, 0.14, 0]}>
+              <cylinderGeometry args={[0.06, 0.062, 0.06, 12]} />
+              <Soft color="#ffffff" />
+            </mesh>
+            <mesh position={[0, 0.2, 0]}>
+              <cylinderGeometry args={[0.052, 0.052, 0.08, 12]} />
+              <Soft color={c.skin} />
+            </mesh>
+          </group>
+        ))}
 
         {/* 반바지 */}
         {[-1, 1].map((s) => (
