@@ -87,6 +87,13 @@ export function HomeScreen() {
           <Text style={styles.closetEmoji}>👕</Text>
           <Text style={styles.closetText}>옷장</Text>
         </Pressable>
+        <Pressable
+          style={[styles.closetButton, { top: insets.top + 64 }]}
+          onPress={() => router.push('/study')}
+        >
+          <Text style={styles.closetEmoji}>📚</Text>
+          <Text style={styles.closetText}>공부방</Text>
+        </Pressable>
 
         <View
           style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}

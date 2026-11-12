@@ -11,6 +11,8 @@ type Props = {
   scale?: number;
   /** 오프라인: 앉아서 졸고, 색이 살짝 빠짐 */
   asleep?: boolean;
+  /** 의자에 앉아 책상에 팔을 올린 자세 */
+  seated?: boolean;
   selected?: boolean;
   /** 아바타마다 숨쉬기 타이밍을 어긋나게 하는 값 */
   phase?: number;
@@ -240,6 +242,7 @@ export function Avatar({
   rotationY = 0,
   scale = 1.15,
   asleep = false,
+  seated = false,
   selected = false,
   phase = 0,
   onPress,
@@ -272,7 +275,7 @@ export function Avatar({
       const hop = selected ? Math.abs(Math.sin(t * 6)) * 0.14 : 0;
       const breathe = Math.sin(t * (asleep ? 1 : 2)) * 0.02;
       body.current.position.y = (asleep ? -0.24 : 0) + breathe + hop;
-      body.current.rotation.z = asleep ? 0 : Math.sin(t * 1.3) * 0.03;
+      body.current.rotation.z = asleep || seated ? 0 : Math.sin(t * 1.3) * 0.03;
     }
     if (ring.current) ring.current.rotation.z = t * 1.5;
   });
@@ -311,7 +314,7 @@ export function Avatar({
         {[-1, 1].map((s) => (
           <group
             key={s}
-            position={asleep ? [s * 0.095, 0.3, 0.33] : [s * 0.095, 0, 0]}
+            position={asleep ? [s * 0.095, 0.3, 0.33] : [s * 0.095, 0, seated ? 0.18 : 0]}
             rotation={[asleep ? -Math.PI / 2 : 0, 0, 0]}
           >
             <mesh position={[0, 0.06, 0.035]} scale={[1, 0.68, 1.5]}>
@@ -338,7 +341,11 @@ export function Avatar({
 
         {/* 반바지 */}
         {[-1, 1].map((s) => (
-          <mesh key={s} position={[s * 0.09, 0.31, 0]}>
+          <mesh
+            key={s}
+            position={seated ? [s * 0.09, 0.33, 0.09] : [s * 0.09, 0.31, 0]}
+            rotation={[seated ? Math.PI / 2 : 0, 0, 0]}
+          >
             <cylinderGeometry args={[0.1, 0.105, 0.17, 14]} />
             <Soft color={c.bottom} />
           </mesh>
@@ -360,7 +367,11 @@ export function Avatar({
 
         {/* 팔: 셔츠 소매 + 손 */}
         {[-1, 1].map((s) => (
-          <group key={s} position={[s * 0.17, 0.67, 0]} rotation={[0, 0, s * 0.6]}>
+          <group
+            key={s}
+            position={[s * 0.17, 0.67, 0]}
+            rotation={seated ? [-1.15, 0, s * 0.2] : [0, 0, s * 0.6]}
+          >
             <mesh position={[0, -0.13, 0]}>
               <capsuleGeometry args={[0.052, 0.16, 6, 12]} />
               <Soft color={c.shirt} />
