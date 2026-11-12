@@ -12,7 +12,6 @@ npm install
 npm run web
 ```
 
-휴대폰에서는 `npm start` 후 Expo Go로 QR을 찍는다.
 
 ## 구조
 
