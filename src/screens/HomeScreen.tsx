@@ -94,6 +94,13 @@ export function HomeScreen() {
           <Text style={styles.closetEmoji}>📚</Text>
           <Text style={styles.closetText}>공부방</Text>
         </Pressable>
+        <Pressable
+          style={[styles.closetButton, { top: insets.top + 114 }]}
+          onPress={() => router.push('/worry')}
+        >
+          <Text style={styles.closetEmoji}>🎈</Text>
+          <Text style={styles.closetText}>고민방</Text>
+        </Pressable>
 
         <View
           style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}
