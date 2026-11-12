@@ -75,7 +75,7 @@ const NIGHT_COLORS: Record<string, string> = {
   'rgba(255,255,255,0.75)': 'rgba(38,37,48,0.8)',
   // 화면 바탕
   '#bfe6f7': '#0f1830',
-  '#f6efe6': '#1c1917',
+  '#f6efe6': '#3a342f',
   '#f3e7d3': '#1a1612',
   '#f4eefb': '#1c1926',
   // 보조 글씨

@@ -48,22 +48,18 @@ export function ClosetScene({ look, focus, spin }: Props) {
 
   return (
     <>
-      <color attach="background" args={[night ? '#1c1917' : '#f6efe6']} />
-      <hemisphereLight args={night ? ['#9aa6d6', '#3a3040', 1.0] : ['#ffffff', '#f0dcc8', 2.1]} />
-      {/* 밤에는 위에서 따뜻한 조명이 캐릭터를 비춘다 */}
-      {night && (
-        <pointLight position={[0.6, 2.6, 2.2]} color="#ffd9a0" intensity={14} distance={8} />
-      )}
-      <directionalLight position={[2, 6, 6]} intensity={night ? 0.5 : 1.6} />
+      <color attach="background" args={[night ? '#3a342f' : '#f6efe6']} />
+      <hemisphereLight args={night ? ['#e6e2f0', '#6a5c50', 1.55] : ['#ffffff', '#f0dcc8', 2.1]} />
+      <directionalLight position={[2, 6, 6]} intensity={night ? 1.0 : 1.6} />
 
       {/* 받침대 */}
       <mesh position={[0, -0.07, 0]}>
         <cylinderGeometry args={[0.8, 0.86, 0.14, 40]} />
-        <meshStandardMaterial color={night ? '#8a7a6c' : '#ffffff'} roughness={0.8} />
+        <meshStandardMaterial color={night ? '#b3a597' : '#ffffff'} roughness={0.8} />
       </mesh>
       <mesh position={[0, -0.2, 0]}>
         <cylinderGeometry args={[1.02, 1.08, 0.12, 40]} />
-        <meshStandardMaterial color={night ? '#5e5047' : '#efe2d2'} roughness={0.9} />
+        <meshStandardMaterial color={night ? '#85766a' : '#efe2d2'} roughness={0.9} />
       </mesh>
 
       <group ref={turntable}>
