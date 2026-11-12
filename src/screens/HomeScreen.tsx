@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { friends, me as meBase, presenceText, type Friend } from '../data/friends';
 import { useMyLook } from '../state/myLook';
+import { THEME_LABEL, createThemedStyles, cycleThemeMode, useThemeMode } from '../state/theme';
 import { HomeScene, type LabelPoint } from '../three/HomeScene';
 
 const LABEL_WIDTH = 120;
@@ -17,6 +18,8 @@ const DOT_COLOR: Record<Friend['presence']['kind'], string> = {
 };
 
 export function HomeScreen() {
+  const styles = useStyles();
+  const themeMode = useThemeMode();
   const insets = useSafeAreaInsets();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [labels, setLabels] = useState<LabelPoint[]>([]);
@@ -81,6 +84,14 @@ export function HomeScreen() {
         </View>
 
         <Pressable
+          accessibilityLabel="낮밤 바꾸기"
+          style={[styles.themeButton, { top: insets.top + 84 }]}
+          onPress={cycleThemeMode}
+        >
+          <Text style={styles.closetText}>{THEME_LABEL[themeMode]}</Text>
+        </Pressable>
+
+        <Pressable
           style={[styles.closetButton, { top: insets.top + 14 }]}
           onPress={() => router.push('/closet')}
         >
@@ -131,7 +142,7 @@ export function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createThemedStyles({
   root: { flex: 1, backgroundColor: '#bfe6f7' },
 
   header: {
@@ -151,6 +162,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
+    backgroundColor: '#ffffff',
+  },
+  themeButton: {
+    position: 'absolute',
+    left: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 18,
     backgroundColor: '#ffffff',
   },
   closetEmoji: { fontSize: 16 },

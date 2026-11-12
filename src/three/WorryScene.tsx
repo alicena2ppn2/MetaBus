@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 import type { AvatarLook } from '../data/look';
+import { useNight } from '../state/theme';
 import { Avatar } from './Avatar';
 
 export type BalloonLabel = { id: string; x: number; y: number };
@@ -119,21 +120,21 @@ function BalloonMesh({
   );
 }
 
-function Room() {
+function Room({ night }: { night: boolean }) {
   return (
     <group>
       <mesh position={[0, -0.1, 0]}>
         <boxGeometry args={[9, 0.2, 5]} />
-        <meshStandardMaterial color="#e9dff5" roughness={0.9} />
+        <meshStandardMaterial color={night ? '#5a5078' : '#e9dff5'} roughness={0.9} />
       </mesh>
       <mesh position={[0, 6, -2.2]}>
         <boxGeometry args={[9, 12.4, 0.1]} />
-        <meshStandardMaterial color="#f4eefb" roughness={0.9} />
+        <meshStandardMaterial color={night ? '#4a4266' : '#f4eefb'} roughness={0.9} />
       </mesh>
       {/* 러그와 쿠션 */}
       <mesh position={[0, 0.01, 0.9]}>
         <cylinderGeometry args={[1.5, 1.5, 0.03, 36]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.95} />
+        <meshStandardMaterial color={night ? '#9a90b4' : '#ffffff'} roughness={0.95} />
       </mesh>
       {(
         [
@@ -151,13 +152,15 @@ function Room() {
 }
 
 export function WorryScene({ balloons, selectedId, myLook, onBalloonPress, onLabels }: Props) {
+  const night = useNight();
   return (
     <>
-      <color attach="background" args={['#f4eefb']} />
-      <hemisphereLight args={['#ffffff', '#dccff0', 2.1]} />
-      <directionalLight position={[2, 7, 6]} intensity={1.5} />
+      <color attach="background" args={[night ? '#1c1926' : '#f4eefb']} />
+      <hemisphereLight args={night ? ['#a3a8e0', '#352d4d', 1.0] : ['#ffffff', '#dccff0', 2.1]} />
+      {night && <pointLight position={[0, 2.4, 2.6]} color="#ffd9b0" intensity={16} distance={9} />}
+      <directionalLight position={[2, 7, 6]} intensity={night ? 0.45 : 1.5} />
       <CameraRig balloons={balloons} onLabels={onLabels} />
-      <Room />
+      <Room night={night} />
       <Avatar look={myLook} position={[0, 0, 0.9]} scale={1.05} />
 
       {balloons.slice(0, SLOTS.length).map((balloon, i) => (

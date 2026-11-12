@@ -3,6 +3,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 import type { Friend } from '../data/friends';
+import { useNight } from '../state/theme';
 import { Avatar } from './Avatar';
 
 export type LabelPoint = { id: string; x: number; y: number };
@@ -86,14 +87,14 @@ function CameraRig({ seats, onLabels }: { seats: Seat[]; onLabels: Props['onLabe
   return null;
 }
 
-function Campfire() {
+function Campfire({ night }: { night: boolean }) {
   const light = useRef<THREE.PointLight>(null);
   const flame = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
     const flicker = 0.85 + Math.sin(t * 11) * 0.08 + Math.sin(t * 23) * 0.05;
-    if (light.current) light.current.intensity = 6 * flicker;
+    if (light.current) light.current.intensity = (night ? 16 : 6) * flicker;
     if (flame.current) {
       flame.current.scale.set(flicker, 0.9 + flicker * 0.25, flicker);
       flame.current.rotation.y = t * 2;
@@ -116,7 +117,13 @@ function Campfire() {
         <coneGeometry args={[0.1, 0.26, 5]} />
         <meshBasicMaterial color="#ffe08a" />
       </mesh>
-      <pointLight ref={light} position={[0, 0.7, 0]} color="#ffb060" distance={5} decay={2} />
+      <pointLight
+        ref={light}
+        position={[0, 0.7, 0]}
+        color="#ffb060"
+        distance={night ? 7 : 5}
+        decay={2}
+      />
     </group>
   );
 }
@@ -174,6 +181,36 @@ function Cloud({ position, speed }: { position: [number, number, number]; speed:
   );
 }
 
+/** 밤하늘의 달과 별. 조명을 받지 않아서 어두워도 빛난다 */
+function NightSky() {
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 40 }, (_, i) => {
+        // 매번 같은 자리에 뜨도록 번호로 위치를 정한다
+        const a = Math.sin(i * 12.9898) * 43758.5453;
+        const b = Math.sin(i * 78.233) * 12543.123;
+        const x = (a - Math.floor(a) - 0.5) * 26;
+        const y = 1.5 + (b - Math.floor(b)) * 16;
+        return [x, y, -9 - (i % 5)] as [number, number, number];
+      }),
+    [],
+  );
+  return (
+    <group>
+      {stars.map((position, i) => (
+        <mesh key={i} position={position}>
+          <sphereGeometry args={[i % 4 === 0 ? 0.07 : 0.045, 6, 6]} />
+          <meshBasicMaterial color="#fff6d8" />
+        </mesh>
+      ))}
+      <mesh position={[2.6, 9.5, -10]}>
+        <sphereGeometry args={[0.8, 20, 16]} />
+        <meshBasicMaterial color="#fff3c4" />
+      </mesh>
+    </group>
+  );
+}
+
 function Island() {
   return (
     <group>
@@ -195,17 +232,23 @@ function Island() {
 }
 
 export function HomeScene({ me, friends, selectedId, onSelect, onLabels }: Props) {
+  const night = useNight();
   const seats = useMemo(() => layoutSeats(me, friends), [me, friends]);
 
   return (
     <>
-      <color attach="background" args={['#bfe6f7']} />
-      <hemisphereLight args={['#ffffff', '#cfe8c4', 2.1]} />
-      <directionalLight position={[3, 8, 6]} intensity={1.6} />
+      <color attach="background" args={[night ? '#0f1830' : '#bfe6f7']} />
+      {night && <NightSky />}
+      <hemisphereLight args={night ? ['#a4b2e6', '#33405e', 1.3] : ['#ffffff', '#cfe8c4', 2.1]} />
+      <directionalLight
+        position={[3, 8, 6]}
+        color={night ? '#b8c6ff' : '#ffffff'}
+        intensity={night ? 0.7 : 1.6}
+      />
       <CameraRig seats={seats} onLabels={onLabels} />
 
       <Island />
-      <Campfire />
+      <Campfire night={night} />
       <Tree position={[-2.3, 0, -1.6]} scale={1.1} />
       <Tree position={[2.2, 0, -1.9]} scale={0.9} />
       <Tree position={[0.2, 0, -2.75]} scale={0.75} />

@@ -3,6 +3,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 import type { AvatarLook } from '../data/look';
+import { useNight } from '../state/theme';
 import { Avatar } from './Avatar';
 
 export type SeatLabel = { seat: number; x: number; y: number };
@@ -34,7 +35,8 @@ const LOOK_AT = new THREE.Vector3(0, 0.6, 0);
 const TILT = THREE.MathUtils.degToRad(44);
 const FIT_HALF_WIDTH = 2.45;
 const FIT_HALF_HEIGHT = 2.6;
-const WOOD = '#d9b48a';
+const WOOD = { day: '#d9b48a', night: '#8f6a48' };
+const WOOD_DARK = { day: '#c79f74', night: '#73543a' };
 
 function overviewPosition(camera: THREE.PerspectiveCamera, aspect: number, out: THREE.Vector3) {
   const tanHalf = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
@@ -94,18 +96,19 @@ function CameraRig({
   return null;
 }
 
-function Desk({ lampOn }: { lampOn: boolean }) {
+function Desk({ lampOn, night }: { lampOn: boolean; night: boolean }) {
+  const time = night ? 'night' : 'day';
   return (
     <group>
       {/* 상판과 옆 칸막이 */}
       <mesh position={[0, 0.54, 0.5]}>
         <boxGeometry args={[1.16, 0.06, 0.56]} />
-        <meshStandardMaterial color={WOOD} roughness={0.8} />
+        <meshStandardMaterial color={WOOD[time]} roughness={0.8} />
       </mesh>
       {[-1, 1].map((s) => (
         <mesh key={s} position={[s * 0.6, 0.42, 0.5]}>
           <boxGeometry args={[0.05, 0.84, 0.6]} />
-          <meshStandardMaterial color="#c79f74" roughness={0.8} />
+          <meshStandardMaterial color={WOOD_DARK[time]} roughness={0.8} />
         </mesh>
       ))}
 
@@ -133,8 +136,13 @@ function Desk({ lampOn }: { lampOn: boolean }) {
         </mesh>
         <mesh position={[-0.06, 0.25, -0.035]}>
           <sphereGeometry args={[0.04, 10, 8]} />
-          <meshBasicMaterial color={lampOn ? '#ffe9a3' : '#c9c9c9'} />
+          <meshBasicMaterial color={lampOn ? '#ffe9a3' : night ? '#55504a' : '#c9c9c9'} />
         </mesh>
+        {/* 밤에는 앉은 자리의 스탠드가 책상을 비춘다 */}
+        {night && lampOn && (
+          <pointLight position={[-0.42, 0.58, 0.13]} color="#ffd58a" intensity={0.5} distance={3} />
+        )}
+        <mesh visible={false}></mesh>
       </group>
 
       {/* 의자 */}
@@ -146,21 +154,26 @@ function Desk({ lampOn }: { lampOn: boolean }) {
   );
 }
 
-function Room() {
+function Room({ night }: { night: boolean }) {
+  const time = night ? 'night' : 'day';
   return (
     <group>
       <mesh position={[0, -0.1, -0.1]}>
         <boxGeometry args={[5.2, 0.2, 5]} />
-        <meshStandardMaterial color="#efd9b8" roughness={0.9} />
+        <meshStandardMaterial color={night ? '#6b5038' : '#efd9b8'} roughness={0.9} />
       </mesh>
       <mesh position={[0, 1.15, -2.55]}>
         <boxGeometry args={[5.2, 2.5, 0.1]} />
-        <meshStandardMaterial color="#fbf3e4" roughness={0.9} />
+        <meshStandardMaterial color={night ? '#5b5348' : '#fbf3e4'} roughness={0.9} />
       </mesh>
       {/* 창문 */}
       <mesh position={[-1.3, 1.45, -2.49]}>
         <boxGeometry args={[1.5, 1, 0.04]} />
-        <meshStandardMaterial color="#bfe6f7" roughness={0.4} />
+        {night ? (
+          <meshBasicMaterial color="#16224a" />
+        ) : (
+          <meshStandardMaterial color="#bfe6f7" roughness={0.4} />
+        )}
       </mesh>
       <mesh position={[-1.3, 1.45, -2.47]}>
         <boxGeometry args={[0.05, 1, 0.04]} />
@@ -169,7 +182,7 @@ function Room() {
       {/* 책장 */}
       <mesh position={[1.4, 1.0, -2.4]}>
         <boxGeometry args={[1.5, 1.6, 0.26]} />
-        <meshStandardMaterial color={WOOD} roughness={0.8} />
+        <meshStandardMaterial color={WOOD[time]} roughness={0.8} />
       </mesh>
       {[0.55, 1.05, 1.55].map((y, row) =>
         ['#f3a7b8', '#a9c8f5', '#ffd98a', '#a8e0d6', '#d8c4f5', '#ff9d7a'].map((color, i) => (
@@ -184,15 +197,16 @@ function Room() {
 }
 
 export function StudyScene({ occupants, mySeat, studying, onSeatPress, onLabels }: Props) {
+  const night = useNight();
   const seats = useMemo(() => SEATS.map(([x, z], seat) => ({ seat, x, z })), []);
 
   return (
     <>
-      <color attach="background" args={['#f3e7d3']} />
-      <hemisphereLight args={['#ffffff', '#e8d2b0', 2.0]} />
-      <directionalLight position={[3, 8, 6]} intensity={1.5} />
+      <color attach="background" args={[night ? '#1a1612' : '#f3e7d3']} />
+      <hemisphereLight args={night ? ['#aab4dc', '#4a3a2e', 1.2] : ['#ffffff', '#e8d2b0', 2.0]} />
+      <directionalLight position={[3, 8, 6]} intensity={night ? 0.4 : 1.5} />
       <CameraRig mySeat={mySeat} studying={studying} onLabels={onLabels} />
-      <Room />
+      <Room night={night} />
 
       {seats.map(({ seat, x, z }) => {
         const occupant = occupants[seat];
@@ -205,7 +219,7 @@ export function StudyScene({ occupants, mySeat, studying, onSeatPress, onLabels 
               onSeatPress(seat);
             }}
           >
-            <Desk lampOn={occupant !== null} />
+            <Desk lampOn={occupant !== null} night={night} />
             {occupant && <Avatar look={occupant.look} scale={1} seated phase={seat * 1.3} />}
           </group>
         );

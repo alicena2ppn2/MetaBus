@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { AnimalKind } from '../data/look';
 import { HELPLINES, hasBadWords, looksLikeCrisis } from '../data/safety';
 import { useMyLook } from '../state/myLook';
+import { createThemedStyles } from '../state/theme';
 import {
   WORRY_CATEGORIES,
   addReply,
@@ -49,6 +50,7 @@ function colorFor(id: string) {
 }
 
 function Helplines() {
+  const styles = useStyles();
   return (
     <View style={styles.help}>
       <Text style={styles.helpTitle}>혼자 견디기 힘들 땐 전문가와 이야기해요</Text>
@@ -62,6 +64,7 @@ function Helplines() {
 }
 
 export function WorryScreen() {
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
   const myLook = useMyLook();
   const { visible, patted } = useWorries();
@@ -370,7 +373,7 @@ export function WorryScreen() {
 const INK = '#3a2d4d';
 const SOFT = '#8b7ba3';
 
-const styles = StyleSheet.create({
+const useStyles = createThemedStyles({
   root: { flex: 1, backgroundColor: '#f4eefb' },
 
   header: {

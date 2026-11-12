@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { friends } from '../data/friends';
 import { useMyLook } from '../state/myLook';
+import { createThemedStyles } from '../state/theme';
 import { addStudySeconds, formatClock, formatDuration, useTodayStudySeconds } from '../state/study';
 import { SEATS, StudyScene, type Occupant, type SeatLabel } from '../three/StudyScene';
 
@@ -24,6 +25,7 @@ type Session =
   | { phase: 'studying'; startedAt: number | null; banked: number };
 
 export function StudyScreen() {
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
   const myLook = useMyLook();
   const todaySeconds = useTodayStudySeconds();
@@ -213,7 +215,7 @@ export function StudyScreen() {
 
 const INK = '#3d2f24';
 
-const styles = StyleSheet.create({
+const useStyles = createThemedStyles({
   root: { flex: 1, backgroundColor: '#f3e7d3' },
 
   header: {

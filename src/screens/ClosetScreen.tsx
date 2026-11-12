@@ -17,6 +17,7 @@ import {
   randomLook,
 } from '../data/look';
 import { setMyLook, useMyLook } from '../state/myLook';
+import { createThemedStyles } from '../state/theme';
 import { ClosetScene, type ClosetFocus } from '../three/ClosetScene';
 
 const CATEGORIES: { id: ClosetFocus; label: string; emoji: string }[] = [
@@ -35,6 +36,7 @@ function Chips<T extends string>({
   selected: T | null;
   onSelect: (id: T) => void;
 }) {
+  const styles = useStyles();
   return (
     <ScrollView
       horizontal
@@ -71,6 +73,7 @@ function Swatches({
   selected: string;
   onSelect: (color: string) => void;
 }) {
+  const styles = useStyles();
   return (
     <View style={styles.swatchBlock}>
       <Text style={styles.swatchLabel}>{label}</Text>
@@ -95,6 +98,7 @@ function Swatches({
 }
 
 export function ClosetScreen() {
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
   const look = useMyLook();
   const [category, setCategory] = useState<ClosetFocus>('hair');
@@ -244,7 +248,7 @@ export function ClosetScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createThemedStyles({
   root: { flex: 1, backgroundColor: '#f6efe6' },
   stage: { flex: 1 },
 
