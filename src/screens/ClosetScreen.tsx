@@ -6,6 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   BOTTOM_COLORS,
+  BOTTOM_STYLES,
+  PATTERNS,
   HAIR_COLORS,
   HAIR_STYLES,
   HEADWEAR,
@@ -23,7 +25,8 @@ import { ClosetScene, type ClosetFocus } from '../three/ClosetScene';
 const CATEGORIES: { id: ClosetFocus; label: string; emoji: string }[] = [
   { id: 'hair', label: '머리', emoji: '💇' },
   { id: 'head', label: '모자', emoji: '🎀' },
-  { id: 'clothes', label: '옷', emoji: '👕' },
+  { id: 'top', label: '상의', emoji: '👕' },
+  { id: 'bottom', label: '하의', emoji: '👗' },
   { id: 'shoes', label: '신발', emoji: '👟' },
 ];
 
@@ -206,12 +209,17 @@ export function ClosetScreen() {
           </>
         )}
 
-        {category === 'clothes' && (
+        {category === 'top' && (
           <>
             <Chips
               options={TOP_STYLES}
               selected={look.top.style}
               onSelect={(style) => setMyLook({ ...look, top: { ...look.top, style } })}
+            />
+            <Chips
+              options={PATTERNS}
+              selected={look.top.pattern}
+              onSelect={(pattern) => setMyLook({ ...look, top: { ...look.top, pattern } })}
             />
             <Swatches
               label="상의 색"
@@ -219,11 +227,26 @@ export function ClosetScreen() {
               selected={look.top.color}
               onSelect={(color) => setMyLook({ ...look, top: { ...look.top, color } })}
             />
+          </>
+        )}
+
+        {category === 'bottom' && (
+          <>
+            <Chips
+              options={BOTTOM_STYLES}
+              selected={look.bottom.style}
+              onSelect={(style) => setMyLook({ ...look, bottom: { ...look.bottom, style } })}
+            />
+            <Chips
+              options={PATTERNS}
+              selected={look.bottom.pattern}
+              onSelect={(pattern) => setMyLook({ ...look, bottom: { ...look.bottom, pattern } })}
+            />
             <Swatches
-              label="바지 색"
+              label={look.top.style === 'dress' ? '하의 색 (원피스에 가려져요)' : '하의 색'}
               colors={BOTTOM_COLORS}
-              selected={look.bottom}
-              onSelect={(bottom) => setMyLook({ ...look, bottom })}
+              selected={look.bottom.color}
+              onSelect={(color) => setMyLook({ ...look, bottom: { ...look.bottom, color } })}
             />
           </>
         )}

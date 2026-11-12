@@ -24,6 +24,7 @@ npm run web
 - `src/state/theme.ts` 낮/밤 테마 (19시~6시는 자동으로 밤, 홈에서 고정 가능)
 - `src/three/HomeScene.tsx` 섬, 모닥불, 카메라, 자리 배치
 - `src/three/Avatar.tsx` 치비 아바타 (몸 하나에 머리, 모자, 옷, 신발만 교체)
+- `src/three/Outfit.tsx` 옷 (상의 7종, 하의 4종) · `src/three/patterns.ts` 줄무늬·체크·도트 무늬
 - `src/data/look.ts` 아바타 외형 타입과 옷장에서 고를 수 있는 목록
 - `src/state/myLook.ts` 내 외형 저장 (기기에 유지)
 - `src/data/friends.ts` 임시 친구 데이터

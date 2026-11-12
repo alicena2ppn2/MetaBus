@@ -6,7 +6,7 @@ import type { AvatarLook } from '../data/look';
 import { useNight } from '../state/theme';
 import { Avatar } from './Avatar';
 
-export type ClosetFocus = 'hair' | 'head' | 'clothes' | 'shoes';
+export type ClosetFocus = 'hair' | 'head' | 'top' | 'bottom' | 'shoes';
 
 type Props = {
   look: AvatarLook;
@@ -20,7 +20,8 @@ type Props = {
 const SHOTS: Record<ClosetFocus, { y: number; halfWidth: number; halfHeight: number }> = {
   hair: { y: 1.0, halfWidth: 0.78, halfHeight: 0.8 },
   head: { y: 1.05, halfWidth: 0.78, halfHeight: 0.95 },
-  clothes: { y: 0.8, halfWidth: 0.78, halfHeight: 1.0 },
+  top: { y: 0.8, halfWidth: 0.78, halfHeight: 1.0 },
+  bottom: { y: 0.75, halfWidth: 0.78, halfHeight: 1.0 },
   shoes: { y: 0.45, halfWidth: 0.55, halfHeight: 0.55 },
 };
 

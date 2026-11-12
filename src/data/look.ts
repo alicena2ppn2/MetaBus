@@ -1,7 +1,9 @@
 export type AnimalKind = 'panda' | 'bear' | 'cat' | 'bunny' | 'frog';
 export type HairStyle = 'fluffy' | 'straight' | 'parted';
 export type HeadwearType = 'hood' | 'band' | 'none';
-export type TopStyle = 'vest' | 'tee';
+export type TopStyle = 'vest' | 'tee' | 'hoodie' | 'sailor' | 'overall' | 'cardigan' | 'dress';
+export type BottomStyle = 'shorts' | 'pants' | 'skirt' | 'pleated';
+export type Pattern = 'solid' | 'stripe' | 'check' | 'dot';
 export type ShoeStyle = 'shoes' | 'boots';
 
 /** 기본 몸 하나에 머리, 모자, 옷, 신발만 바꾸는 아바타 외형 */
@@ -11,8 +13,9 @@ export type AvatarLook = {
   /** 후드(머리 전체를 덮음), 머리띠(귀만 달림), 없음 */
   head: { type: HeadwearType; kind: AnimalKind; color: string };
   /** 조끼는 안에 셔츠를 받쳐 입는다 */
-  top: { style: TopStyle; color: string; shirt: string };
-  bottom: string;
+  top: { style: TopStyle; color: string; shirt: string; pattern: Pattern };
+  /** 원피스를 입으면 하의는 가려진다 */
+  bottom: { style: BottomStyle; color: string; pattern: Pattern };
   shoes: { style: ShoeStyle; color: string };
 };
 
@@ -20,8 +23,8 @@ export const defaultLook: AvatarLook = {
   skin: '#fbe0cc',
   hair: { style: 'fluffy', color: '#9fb6cc' },
   head: { type: 'hood', kind: 'panda', color: '#2b2a2e' },
-  top: { style: 'vest', color: '#f8ebc8', shirt: '#e4ecfa' },
-  bottom: '#c9a276',
+  top: { style: 'vest', color: '#f8ebc8', shirt: '#e4ecfa', pattern: 'solid' },
+  bottom: { style: 'shorts', color: '#c9a276', pattern: 'solid' },
   shoes: { style: 'shoes', color: '#7a5038' },
 };
 
@@ -103,7 +106,26 @@ export const HEADWEAR: {
 
 export const TOP_STYLES: { id: TopStyle; label: string }[] = [
   { id: 'vest', label: '조끼 + 셔츠' },
-  { id: 'tee', label: '티셔츠' },
+  { id: 'tee', label: '반팔 티' },
+  { id: 'hoodie', label: '후드티' },
+  { id: 'sailor', label: '세일러' },
+  { id: 'cardigan', label: '카디건' },
+  { id: 'overall', label: '멜빵' },
+  { id: 'dress', label: '원피스' },
+];
+
+export const BOTTOM_STYLES: { id: BottomStyle; label: string }[] = [
+  { id: 'shorts', label: '반바지' },
+  { id: 'pants', label: '긴바지' },
+  { id: 'skirt', label: '플레어 치마' },
+  { id: 'pleated', label: '주름 치마' },
+];
+
+export const PATTERNS: { id: Pattern; label: string }[] = [
+  { id: 'solid', label: '단색' },
+  { id: 'stripe', label: '줄무늬' },
+  { id: 'check', label: '체크' },
+  { id: 'dot', label: '도트' },
 ];
 
 export const SHOE_STYLES: { id: ShoeStyle; label: string }[] = [
@@ -172,8 +194,17 @@ export function randomLook(current: AvatarLook): AvatarLook {
     skin: current.skin,
     hair: { style: pick(HAIR_STYLES).id, color: pick(HAIR_COLORS) },
     head: { type: headwear.type, kind: headwear.kind, color: headwear.color },
-    top: { style: pick(TOP_STYLES).id, color: pick(TOP_COLORS), shirt: '#ffffff' },
-    bottom: pick(BOTTOM_COLORS),
+    top: {
+      style: pick(TOP_STYLES).id,
+      color: pick(TOP_COLORS),
+      shirt: '#ffffff',
+      pattern: pick(PATTERNS).id,
+    },
+    bottom: {
+      style: pick(BOTTOM_STYLES).id,
+      color: pick(BOTTOM_COLORS),
+      pattern: pick(PATTERNS).id,
+    },
     shoes: { style: pick(SHOE_STYLES).id, color: pick(SHOE_COLORS) },
   };
 }

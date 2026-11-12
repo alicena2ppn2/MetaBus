@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 import type { AvatarLook } from '../data/look';
+import { Outfit } from './Outfit';
 
 type Props = {
   look: AvatarLook;
@@ -262,8 +263,8 @@ export function Avatar({
       ),
       ear: tone(look.head.color, asleep),
       top: tone(look.top.color, asleep),
-      shirt: tone(look.top.style === 'vest' ? look.top.shirt : look.top.color, asleep),
-      bottom: tone(look.bottom, asleep),
+      shirt: tone(look.top.shirt, asleep),
+      bottom: tone(look.bottom.color, asleep),
       shoe: tone(look.shoes.color, asleep),
     }),
     [look, asleep, isHood],
@@ -310,78 +311,7 @@ export function Avatar({
       </mesh>
 
       <group ref={body}>
-        {/* 다리: 잘 때는 앞으로 쭉 뻗고 앉는다 */}
-        {[-1, 1].map((s) => (
-          <group
-            key={s}
-            position={asleep ? [s * 0.095, 0.3, 0.33] : [s * 0.095, 0, seated ? 0.18 : 0]}
-            rotation={[asleep ? -Math.PI / 2 : 0, 0, 0]}
-          >
-            <mesh position={[0, 0.06, 0.035]} scale={[1, 0.68, 1.5]}>
-              <sphereGeometry args={[0.085, 12, 10]} />
-              <Soft color={c.shoe} />
-            </mesh>
-            {look.shoes.style === 'boots' ? (
-              <mesh position={[0, 0.15, 0]}>
-                <cylinderGeometry args={[0.068, 0.07, 0.14, 12]} />
-                <Soft color={c.shoe} />
-              </mesh>
-            ) : (
-              <mesh position={[0, 0.14, 0]}>
-                <cylinderGeometry args={[0.06, 0.062, 0.06, 12]} />
-                <Soft color="#ffffff" />
-              </mesh>
-            )}
-            <mesh position={[0, 0.2, 0]}>
-              <cylinderGeometry args={[0.052, 0.052, 0.08, 12]} />
-              <Soft color={c.skin} />
-            </mesh>
-          </group>
-        ))}
-
-        {/* 반바지 */}
-        {[-1, 1].map((s) => (
-          <mesh
-            key={s}
-            position={seated ? [s * 0.09, 0.33, 0.09] : [s * 0.09, 0.31, 0]}
-            rotation={[seated ? Math.PI / 2 : 0, 0, 0]}
-          >
-            <cylinderGeometry args={[0.1, 0.105, 0.17, 14]} />
-            <Soft color={c.bottom} />
-          </mesh>
-        ))}
-        <mesh position={[0, 0.39, 0]} scale={[1, 0.6, 0.85]}>
-          <sphereGeometry args={[0.2, 16, 12]} />
-          <Soft color={c.bottom} />
-        </mesh>
-
-        {/* 조끼 + 셔츠 깃 */}
-        <mesh position={[0, 0.55, 0]} scale={[1, 1, 0.85]}>
-          <cylinderGeometry args={[0.15, 0.215, 0.32, 18]} />
-          <Soft color={c.top} />
-        </mesh>
-        <mesh position={[0, 0.71, 0]} scale={[1, 0.5, 0.85]}>
-          <sphereGeometry args={[0.15, 16, 10]} />
-          <Soft color={c.shirt} />
-        </mesh>
-
-        {/* 팔: 셔츠 소매 + 손 */}
-        {[-1, 1].map((s) => (
-          <group
-            key={s}
-            position={[s * 0.17, 0.67, 0]}
-            rotation={seated ? [-1.15, 0, s * 0.2] : [0, 0, s * 0.6]}
-          >
-            <mesh position={[0, -0.13, 0]}>
-              <capsuleGeometry args={[0.052, 0.16, 6, 12]} />
-              <Soft color={c.shirt} />
-            </mesh>
-            <mesh position={[0, -0.27, 0]}>
-              <sphereGeometry args={[0.05, 12, 10]} />
-              <Soft color={c.skin} />
-            </mesh>
-          </group>
-        ))}
+        <Outfit look={look} c={c} asleep={asleep} seated={seated} />
 
         <group position={[0, 1.04, 0.01]} rotation={[asleep ? 0.3 : 0, 0, 0]} scale={[1, 0.94, 1]}>
           <Head look={look} c={c} asleep={asleep} />

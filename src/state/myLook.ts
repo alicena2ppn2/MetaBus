@@ -17,12 +17,19 @@ AsyncStorage.getItem(STORAGE_KEY)
   .then((saved) => {
     if (!saved) return;
     const parsed = JSON.parse(saved) as Partial<AvatarLook>;
+    // 예전에는 하의가 색 하나였다
+    const savedBottom: unknown = parsed.bottom;
+    const bottom =
+      typeof savedBottom === 'string'
+        ? { ...defaultLook.bottom, color: savedBottom }
+        : { ...defaultLook.bottom, ...parsed.bottom };
     look = {
       ...defaultLook,
       ...parsed,
       hair: { ...defaultLook.hair, ...parsed.hair },
       head: { ...defaultLook.head, ...parsed.head },
       top: { ...defaultLook.top, ...parsed.top },
+      bottom,
       shoes: { ...defaultLook.shoes, ...parsed.shoes },
     };
     emit();
