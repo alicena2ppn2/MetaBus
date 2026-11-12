@@ -1,9 +1,11 @@
 import { Canvas } from '@react-three/fiber';
+import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { friends, me, presenceText, type Friend } from '../data/friends';
+import { friends, me as meBase, presenceText, type Friend } from '../data/friends';
+import { useMyLook } from '../state/myLook';
 import { HomeScene, type LabelPoint } from '../three/HomeScene';
 
 const LABEL_WIDTH = 120;
@@ -19,7 +21,9 @@ export function HomeScreen() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [labels, setLabels] = useState<LabelPoint[]>([]);
 
-  const everyone = useMemo(() => [...friends, me], []);
+  const myLook = useMyLook();
+  const me = useMemo(() => ({ ...meBase, look: myLook }), [myLook]);
+  const everyone = useMemo(() => [...friends, me], [me]);
   const selected = everyone.find((f) => f.id === selectedId) ?? null;
   const awake = friends.filter((f) => f.presence.kind !== 'offline').length;
 
@@ -76,6 +80,14 @@ export function HomeScreen() {
           </Text>
         </View>
 
+        <Pressable
+          style={[styles.closetButton, { top: insets.top + 14 }]}
+          onPress={() => router.push('/closet')}
+        >
+          <Text style={styles.closetEmoji}>👕</Text>
+          <Text style={styles.closetText}>옷장</Text>
+        </Pressable>
+
         <View
           style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}
           pointerEvents="box-none"
@@ -116,6 +128,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: { fontSize: 28, fontWeight: '800', color: '#1f3a4d' },
+  closetButton: {
+    position: 'absolute',
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#ffffff',
+  },
+  closetEmoji: { fontSize: 16 },
+  closetText: { fontSize: 15, fontWeight: '700', color: '#1f3a4d' },
   subtitle: { marginTop: 4, fontSize: 14, color: '#4a6a7d' },
 
   labelAnchor: {

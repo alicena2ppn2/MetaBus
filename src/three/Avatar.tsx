@@ -2,12 +2,13 @@ import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
-import type { AvatarLook } from '../data/friends';
+import type { AvatarLook } from '../data/look';
 
 type Props = {
   look: AvatarLook;
-  position: [number, number, number];
-  rotationY: number;
+  position?: [number, number, number];
+  rotationY?: number;
+  scale?: number;
   /** 오프라인: 앉아서 졸고, 색이 살짝 빠짐 */
   asleep?: boolean;
   selected?: boolean;
@@ -18,7 +19,7 @@ type Props = {
 
 const GRAY = new THREE.Color('#a4a8ae');
 const EYE = '#4a2c22';
-const SHOE = '#7a5038';
+const PANDA_WHITE = '#f7f7f5';
 
 const HEAD_R = 0.36;
 const HOOD_R = 0.405;
@@ -31,7 +32,7 @@ function tone(hex: string, asleep: boolean) {
 }
 
 type Tones = Record<
-  'skin' | 'hair' | 'hood' | 'hoodTop' | 'ear' | 'top' | 'shirt' | 'bottom',
+  'skin' | 'hair' | 'hood' | 'hoodTop' | 'ear' | 'top' | 'shirt' | 'bottom' | 'shoe',
   THREE.Color
 >;
 
@@ -40,7 +41,7 @@ function Soft({ color }: { color: THREE.ColorRepresentation }) {
 }
 
 function Ears({ look, c }: { look: AvatarLook; c: Tones }) {
-  switch (look.hood.kind) {
+  switch (look.head.kind) {
     case 'cat':
       return (
         <>
@@ -98,7 +99,8 @@ function Ears({ look, c }: { look: AvatarLook; c: Tones }) {
               <Soft color={c.ear} />
             </mesh>
           ))}
-          {look.hood.kind === 'panda' &&
+          {look.head.kind === 'panda' &&
+            look.head.type === 'hood' &&
             [-1, 1].map((s) => (
               <mesh
                 key={`p${s}`}
@@ -115,30 +117,46 @@ function Ears({ look, c }: { look: AvatarLook; c: Tones }) {
   }
 }
 
+/** 앞머리 가닥: [x, y, z, 기울기, 너비] */
+const BANGS: Record<AvatarLook['hair']['style'], [number, number, number, number, number][]> = {
+  fluffy: [
+    [-0.19, 0.08, 0.292, 0.55, 1],
+    [-0.065, 0.06, 0.34, 0.15, 1],
+    [0.07, 0.07, 0.34, -0.2, 1],
+    [0.19, 0.08, 0.292, -0.55, 1],
+  ],
+  straight: [],
+  parted: [
+    [-0.17, 0.085, 0.3, 0.8, 1.25],
+    [0.17, 0.085, 0.3, -0.8, 1.25],
+  ],
+};
+
 function Head({ look, c, asleep }: { look: AvatarLook; c: Tones; asleep: boolean }) {
   // 얼굴이 후드 밖으로 나오는 경계 원 (두 구가 만나는 곳)
   const rimZ = (HOOD_R ** 2 - HEAD_R ** 2 - HOOD_BACK ** 2) / (2 * HOOD_BACK);
   const rimR = Math.sqrt(HEAD_R ** 2 - rimZ ** 2);
 
+  const isHood = look.head.type === 'hood';
   return (
     <>
       <mesh>
-        <sphereGeometry args={[HEAD_R, 24, 18]} />
+        <sphereGeometry args={[HEAD_R, 36, 26]} />
         <Soft color={c.skin} />
       </mesh>
 
-      {/* 후드 */}
+      {/* 후드. 후드를 안 쓰면 같은 모양이 머리카락이 된다 */}
       <mesh position={[0, 0, -HOOD_BACK]}>
-        <sphereGeometry args={[HOOD_R, 24, 18]} />
+        <sphereGeometry args={[HOOD_R, 36, 26]} />
         <Soft color={c.hood} />
       </mesh>
-      {look.hood.topColor && (
+      {isHood && look.head.kind === 'panda' && (
         <mesh position={[0, 0, -HOOD_BACK]}>
           <sphereGeometry args={[HOOD_R + 0.006, 24, 10, 0, Math.PI * 2, 0, Math.PI * 0.47]} />
           <Soft color={c.hoodTop} />
         </mesh>
       )}
-      {/* 후드 테두리: 앞머리보다 바깥에 있어야 머리카락이 후드를 뚫고 나오지 않는다 */}
+      {/* 테두리: 후드(또는 머리카락)와 얼굴이 만나는 경계를 덮는다. 앞머리보다 바깥에 있어야 한다 */}
       <mesh position={[0, 0, rimZ + 0.005]}>
         <torusGeometry args={[rimR + 0.022, 0.036, 10, 20, Math.PI]} />
         <Soft color={c.hoodTop} />
@@ -147,22 +165,21 @@ function Head({ look, c, asleep }: { look: AvatarLook; c: Tones; asleep: boolean
         <torusGeometry args={[rimR + 0.022, 0.036, 10, 20, Math.PI]} />
         <Soft color={c.hood} />
       </mesh>
-      <Ears look={look} c={c} />
+      {look.head.type === 'band' && (
+        <mesh position={[0, 0, -HOOD_BACK]}>
+          <torusGeometry args={[HOOD_R + 0.004, 0.03, 8, 24, Math.PI]} />
+          <Soft color={c.ear} />
+        </mesh>
+      )}
+      {look.head.type !== 'none' && <Ears look={look} c={c} />}
 
       {/* 앞머리: 후드 구멍 안쪽 이마만 덮는 덩어리 + 아래로 떨어지는 가닥 */}
-      <mesh rotation={[1.08, 0, 0]}>
-        <sphereGeometry args={[HEAD_R + 0.004, 20, 8, 0, Math.PI * 2, 0, Math.PI * 0.145]} />
+      <mesh rotation={[look.hair.style === 'straight' ? 1.2 : 1.08, 0, 0]}>
+        <sphereGeometry args={[HEAD_R + 0.004, 20, 8, 0, Math.PI * 2, 0, Math.PI * 0.148]} />
         <Soft color={c.hair} />
       </mesh>
-      {(
-        [
-          [-0.19, 0.08, 0.292, 0.55],
-          [-0.065, 0.06, 0.34, 0.15],
-          [0.07, 0.07, 0.34, -0.2],
-          [0.19, 0.08, 0.292, -0.55],
-        ] as const
-      ).map(([x, y, z, tilt], i) => (
-        <mesh key={i} position={[x, y, z]} rotation={[0.25, 0, tilt]} scale={[0.9, 1.2, 0.35]}>
+      {BANGS[look.hair.style].map(([x, y, z, tilt, w], i) => (
+        <mesh key={i} position={[x, y, z]} rotation={[0.25, 0, tilt]} scale={[0.9 * w, 1.2, 0.35]}>
           <sphereGeometry args={[0.1, 12, 10]} />
           <Soft color={c.hair} />
         </mesh>
@@ -219,8 +236,9 @@ function Head({ look, c, asleep }: { look: AvatarLook; c: Tones; asleep: boolean
 
 export function Avatar({
   look,
-  position,
-  rotationY,
+  position = [0, 0, 0],
+  rotationY = 0,
+  scale = 1.15,
   asleep = false,
   selected = false,
   phase = 0,
@@ -229,18 +247,23 @@ export function Avatar({
   const body = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
 
+  const isHood = look.head.type === 'hood';
   const c = useMemo<Tones>(
     () => ({
       skin: tone(look.skin, asleep),
-      hair: tone(look.hair, asleep),
-      hood: tone(look.hood.color, asleep),
-      hoodTop: tone(look.hood.topColor ?? look.hood.color, asleep),
-      ear: tone(look.hood.earColor ?? look.hood.color, asleep),
-      top: tone(look.top, asleep),
-      shirt: tone(look.shirt, asleep),
+      hair: tone(look.hair.color, asleep),
+      hood: tone(isHood ? look.head.color : look.hair.color, asleep),
+      hoodTop: tone(
+        !isHood ? look.hair.color : look.head.kind === 'panda' ? PANDA_WHITE : look.head.color,
+        asleep,
+      ),
+      ear: tone(look.head.color, asleep),
+      top: tone(look.top.color, asleep),
+      shirt: tone(look.top.style === 'vest' ? look.top.shirt : look.top.color, asleep),
       bottom: tone(look.bottom, asleep),
+      shoe: tone(look.shoes.color, asleep),
     }),
-    [look, asleep],
+    [look, asleep, isHood],
   );
 
   useFrame(({ clock }) => {
@@ -258,7 +281,7 @@ export function Avatar({
     <group
       position={position}
       rotation={[0, rotationY, 0]}
-      scale={1.15}
+      scale={scale}
       onClick={(e) => {
         e.stopPropagation();
         onPress?.();
@@ -293,12 +316,19 @@ export function Avatar({
           >
             <mesh position={[0, 0.06, 0.035]} scale={[1, 0.68, 1.5]}>
               <sphereGeometry args={[0.085, 12, 10]} />
-              <Soft color={SHOE} />
+              <Soft color={c.shoe} />
             </mesh>
-            <mesh position={[0, 0.14, 0]}>
-              <cylinderGeometry args={[0.06, 0.062, 0.06, 12]} />
-              <Soft color="#ffffff" />
-            </mesh>
+            {look.shoes.style === 'boots' ? (
+              <mesh position={[0, 0.15, 0]}>
+                <cylinderGeometry args={[0.068, 0.07, 0.14, 12]} />
+                <Soft color={c.shoe} />
+              </mesh>
+            ) : (
+              <mesh position={[0, 0.14, 0]}>
+                <cylinderGeometry args={[0.06, 0.062, 0.06, 12]} />
+                <Soft color="#ffffff" />
+              </mesh>
+            )}
             <mesh position={[0, 0.2, 0]}>
               <cylinderGeometry args={[0.052, 0.052, 0.08, 12]} />
               <Soft color={c.skin} />
