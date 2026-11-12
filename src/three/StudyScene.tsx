@@ -35,8 +35,8 @@ const LOOK_AT = new THREE.Vector3(0, 0.6, 0);
 const TILT = THREE.MathUtils.degToRad(44);
 const FIT_HALF_WIDTH = 2.45;
 const FIT_HALF_HEIGHT = 2.6;
-const WOOD = { day: '#d9b48a', night: '#8f6a48' };
-const WOOD_DARK = { day: '#c79f74', night: '#73543a' };
+const WOOD = { day: '#d9b48a', night: '#a67d57' };
+const WOOD_DARK = { day: '#c79f74', night: '#8a6648' };
 
 function overviewPosition(camera: THREE.PerspectiveCamera, aspect: number, out: THREE.Vector3) {
   const tanHalf = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
@@ -160,17 +160,17 @@ function Room({ night }: { night: boolean }) {
     <group>
       <mesh position={[0, -0.1, -0.1]}>
         <boxGeometry args={[5.2, 0.2, 5]} />
-        <meshStandardMaterial color={night ? '#6b5038' : '#efd9b8'} roughness={0.9} />
+        <meshStandardMaterial color={night ? '#8c6c4e' : '#efd9b8'} roughness={0.9} />
       </mesh>
       <mesh position={[0, 1.15, -2.55]}>
         <boxGeometry args={[5.2, 2.5, 0.1]} />
-        <meshStandardMaterial color={night ? '#5b5348' : '#fbf3e4'} roughness={0.9} />
+        <meshStandardMaterial color={night ? '#7d7266' : '#fbf3e4'} roughness={0.9} />
       </mesh>
       {/* 창문 */}
       <mesh position={[-1.3, 1.45, -2.49]}>
         <boxGeometry args={[1.5, 1, 0.04]} />
         {night ? (
-          <meshBasicMaterial color="#16224a" />
+          <meshBasicMaterial color="#2a3f6e" />
         ) : (
           <meshStandardMaterial color="#bfe6f7" roughness={0.4} />
         )}
@@ -202,9 +202,9 @@ export function StudyScene({ occupants, mySeat, studying, onSeatPress, onLabels 
 
   return (
     <>
-      <color attach="background" args={[night ? '#1a1612' : '#f3e7d3']} />
-      <hemisphereLight args={night ? ['#aab4dc', '#4a3a2e', 1.2] : ['#ffffff', '#e8d2b0', 2.0]} />
-      <directionalLight position={[3, 8, 6]} intensity={night ? 0.4 : 1.5} />
+      <color attach="background" args={[night ? '#3d332b' : '#f3e7d3']} />
+      <hemisphereLight args={night ? ['#c9cde6', '#66544a', 1.65] : ['#ffffff', '#e8d2b0', 2.0]} />
+      <directionalLight position={[3, 8, 6]} intensity={night ? 0.85 : 1.5} />
       <CameraRig mySeat={mySeat} studying={studying} onLabels={onLabels} />
       <Room night={night} />
 

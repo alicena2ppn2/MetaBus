@@ -125,11 +125,11 @@ function Room({ night }: { night: boolean }) {
     <group>
       <mesh position={[0, -0.1, 0]}>
         <boxGeometry args={[9, 0.2, 5]} />
-        <meshStandardMaterial color={night ? '#5a5078' : '#e9dff5'} roughness={0.9} />
+        <meshStandardMaterial color={night ? '#70669a' : '#e9dff5'} roughness={0.9} />
       </mesh>
       <mesh position={[0, 6, -2.2]}>
         <boxGeometry args={[9, 12.4, 0.1]} />
-        <meshStandardMaterial color={night ? '#4a4266' : '#f4eefb'} roughness={0.9} />
+        <meshStandardMaterial color={night ? '#5f5686' : '#f4eefb'} roughness={0.9} />
       </mesh>
       {/* 러그와 쿠션 */}
       <mesh position={[0, 0.01, 0.9]}>
@@ -155,10 +155,10 @@ export function WorryScene({ balloons, selectedId, myLook, onBalloonPress, onLab
   const night = useNight();
   return (
     <>
-      <color attach="background" args={[night ? '#1c1926' : '#f4eefb']} />
-      <hemisphereLight args={night ? ['#a3a8e0', '#352d4d', 1.0] : ['#ffffff', '#dccff0', 2.1]} />
-      {night && <pointLight position={[0, 2.4, 2.6]} color="#ffd9b0" intensity={16} distance={9} />}
-      <directionalLight position={[2, 7, 6]} intensity={night ? 0.45 : 1.5} />
+      <color attach="background" args={[night ? '#3a3356' : '#f4eefb']} />
+      <hemisphereLight args={night ? ['#c4c6ee', '#5a4f7a', 1.55] : ['#ffffff', '#dccff0', 2.1]} />
+      {night && <pointLight position={[0, 2.4, 2.6]} color="#ffd9b0" intensity={8} distance={9} />}
+      <directionalLight position={[2, 7, 6]} intensity={night ? 0.85 : 1.5} />
       <CameraRig balloons={balloons} onLabels={onLabels} />
       <Room night={night} />
       <Avatar look={myLook} position={[0, 0, 0.9]} scale={1.05} />

@@ -237,13 +237,13 @@ export function HomeScene({ me, friends, selectedId, onSelect, onLabels }: Props
 
   return (
     <>
-      <color attach="background" args={[night ? '#0f1830' : '#bfe6f7']} />
+      <color attach="background" args={[night ? '#2a3f6e' : '#bfe6f7']} />
       {night && <NightSky />}
-      <hemisphereLight args={night ? ['#a4b2e6', '#33405e', 1.3] : ['#ffffff', '#cfe8c4', 2.1]} />
+      <hemisphereLight args={night ? ['#b9c5f0', '#46557a', 1.65] : ['#ffffff', '#cfe8c4', 2.1]} />
       <directionalLight
         position={[3, 8, 6]}
         color={night ? '#b8c6ff' : '#ffffff'}
-        intensity={night ? 0.7 : 1.6}
+        intensity={night ? 0.95 : 1.6}
       />
       <CameraRig seats={seats} onLabels={onLabels} />
 
