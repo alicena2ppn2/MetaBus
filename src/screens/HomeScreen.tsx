@@ -76,7 +76,10 @@ export function HomeScreen() {
           </Text>
         </View>
 
-        <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]} pointerEvents="box-none">
+        <View
+          style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}
+          pointerEvents="box-none"
+        >
           {selected ? (
             <View style={styles.card}>
               <Text style={styles.cardEmoji}>{selected.emoji}</Text>
@@ -105,11 +108,21 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#bfe6f7' },
 
-  header: { position: 'absolute', top: 0, left: 0, right: 0, paddingHorizontal: 20 },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+  },
   title: { fontSize: 28, fontWeight: '800', color: '#1f3a4d' },
   subtitle: { marginTop: 4, fontSize: 14, color: '#4a6a7d' },
 
-  labelAnchor: { position: 'absolute', width: LABEL_WIDTH, alignItems: 'center' },
+  labelAnchor: {
+    position: 'absolute',
+    width: LABEL_WIDTH,
+    alignItems: 'center',
+  },
   label: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -125,7 +138,13 @@ const styles = StyleSheet.create({
   labelNameActive: { color: '#ffffff' },
   dot: { width: 8, height: 8, borderRadius: 4 },
 
-  footer: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 16 },
+  footer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 16,
+  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -138,7 +157,12 @@ const styles = StyleSheet.create({
   cardBody: { flex: 1 },
   cardName: { fontSize: 18, fontWeight: '800', color: '#1f3a4d' },
   cardMessage: { marginTop: 2, fontSize: 15, color: '#33505f' },
-  cardPresence: { marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  cardPresence: {
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   cardPresenceText: { fontSize: 13, color: '#6a7f8c' },
   hint: {
     alignSelf: 'center',

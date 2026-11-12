@@ -18,14 +18,18 @@ type Props = {
 
 const ISLAND_RADIUS = 3.1;
 const SEAT_RADIUS = 1.95;
-const LABEL_HEIGHT = 1.62;
+const LABEL_HEIGHT = 1.95;
 const LOOK_AT_Y = 0.5;
-const CAMERA_TILT = THREE.MathUtils.degToRad(32);
+const CAMERA_TILT = THREE.MathUtils.degToRad(29);
 // 화면 비율이 달라도 이만큼은 항상 화면 안에 들어오게 카메라 거리를 맞춘다
 const FIT_HALF_WIDTH = 2.9;
 const FIT_HALF_HEIGHT = 3.3;
 
-type Seat = { friend: Friend; position: [number, number, number]; rotationY: number };
+type Seat = {
+  friend: Friend;
+  position: [number, number, number];
+  rotationY: number;
+};
 
 /** 친구들은 모닥불 뒤쪽 반원에, 나는 앞쪽에 둘러앉힌다 */
 function layoutSeats(me: Friend, friends: Friend[]): Seat[] {
@@ -39,7 +43,11 @@ function layoutSeats(me: Friend, friends: Friend[]): Seat[] {
   });
   // 정면 가운데에 서면 모닥불을 가려서 살짝 왼쪽 앞에 둔다
   const mine: [number, number] = [-0.95, 1.75];
-  seats.push({ friend: me, position: [mine[0], 0, mine[1]], rotationY: facing(...mine) });
+  seats.push({
+    friend: me,
+    position: [mine[0], 0, mine[1]],
+    rotationY: facing(...mine),
+  });
   return seats;
 }
 
@@ -192,8 +200,8 @@ export function HomeScene({ me, friends, selectedId, onSelect, onLabels }: Props
   return (
     <>
       <color attach="background" args={['#bfe6f7']} />
-      <ambientLight intensity={1.5} />
-      <directionalLight position={[4, 8, 5]} intensity={2.2} />
+      <hemisphereLight args={['#ffffff', '#cfe8c4', 2.1]} />
+      <directionalLight position={[3, 8, 6]} intensity={1.6} />
       <CameraRig seats={seats} onLabels={onLabels} />
 
       <Island />
