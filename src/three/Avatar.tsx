@@ -138,19 +138,20 @@ function Head({ look, c, asleep }: { look: AvatarLook; c: Tones; asleep: boolean
           <Soft color={c.hoodTop} />
         </mesh>
       )}
-      <mesh position={[0, 0, rimZ - 0.012]}>
-        <torusGeometry args={[rimR + 0.012, 0.026, 8, 16, Math.PI]} />
+      {/* 후드 테두리: 앞머리보다 바깥에 있어야 머리카락이 후드를 뚫고 나오지 않는다 */}
+      <mesh position={[0, 0, rimZ + 0.005]}>
+        <torusGeometry args={[rimR + 0.022, 0.036, 10, 20, Math.PI]} />
         <Soft color={c.hoodTop} />
       </mesh>
-      <mesh position={[0, 0, rimZ - 0.012]} rotation={[0, 0, Math.PI]}>
-        <torusGeometry args={[rimR + 0.012, 0.026, 8, 16, Math.PI]} />
+      <mesh position={[0, 0, rimZ + 0.005]} rotation={[0, 0, Math.PI]}>
+        <torusGeometry args={[rimR + 0.022, 0.036, 10, 20, Math.PI]} />
         <Soft color={c.hood} />
       </mesh>
       <Ears look={look} c={c} />
 
-      {/* 앞머리: 이마를 덮는 덩어리 + 아래로 떨어지는 가닥 */}
-      <mesh position={[0, 0.01, 0.012]} rotation={[0.62, 0, 0]}>
-        <sphereGeometry args={[HEAD_R + 0.012, 20, 8, 0, Math.PI * 2, 0, Math.PI * 0.24]} />
+      {/* 앞머리: 후드 구멍 안쪽 이마만 덮는 덩어리 + 아래로 떨어지는 가닥 */}
+      <mesh rotation={[1.08, 0, 0]}>
+        <sphereGeometry args={[HEAD_R + 0.004, 20, 8, 0, Math.PI * 2, 0, Math.PI * 0.145]} />
         <Soft color={c.hair} />
       </mesh>
       {(
